@@ -1,22 +1,50 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import { Container, Typography } from '@material-ui/core';
+import axios from 'axios'
+import { withRouter } from 'react-router-dom';
+import './Style/Blog.scss'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = theme => ({
     root: {
-        flexGrow: 1,
+        marginTop: 50,
+    },
+    body: {
+        p: {
+            textTransform: 'uppercase',
+        }
     }
-}));
+});
 
-function BlogPage() {
-    const classes = useStyles();
 
-    return (
-        <div className={classes.root}>
-            <h1>
-                This is the single blog
-            </h1>
-        </div>
-    );
+class BlogPage extends Component {
+    state = {
+        article: [],
+        url: this.props.match,
+    }
+
+    componentDidMount() {
+        const url = `https://bhaskaruprety.pythonanywhere.com/article/${this.state.url.params.id.toString()}`
+        axios.get(url)
+            .then(response => {
+                this.setState({
+                    article: response.data,
+                })
+            })
+    }
+
+    render() {
+        const { classes } = this.props;
+        const data = this.state.article;
+        return (
+            <div className={classes.root}>
+                <Container>
+                    <Typography variant='h3'>{data.title}</Typography>
+                    <div dangerouslySetInnerHTML={{__html:data.content}} className='richText'/>
+                </Container>
+            </div>
+        );
+    }
 }
 
-export default BlogPage
+export default withStyles(useStyles)(withRouter(BlogPage));

@@ -1,73 +1,57 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import { Grid, Container } from '@material-ui/core';
 import BlogCard from "./Groups/components/BlogCard";
-import axios from "axios";
+import axios from 'axios'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = theme => ({
     root: {
         marginTop: 50,
     }
-}));
+});
 
-function BlogsPage() {
-    const classes = useStyles();
 
-    const url = "https://bhaskaruprety.pythonanywhere.com"
-    const endpoint = "/article"
-    const instance = axios.create({
-        baseURL: url,
-        timeout: 10000,
-        headers: {
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Access-Control-Allow-Origin": true,
-            "Access-Control-Allow-Credentials": true,
-        }
-    });
+class BlogsPage extends Component {
+    state = {
+        articles: [],
+        users: []
+    }
 
-    instance.get(endpoint)
-        .then( response =>{
-            console.log(response)
-        })
-        .catch(err =>{
-            console.log(err)
-        })
+    componentDidMount() {
+        axios.get('https://bhaskaruprety.pythonanywhere.com/article/')
+            .then(response => {
+                let data = response.data.results
+                // eslint-disable-next-line array-callback-return
+                data.map((item, index) => {
+                    const { authorDetails } = item;
+                    this.state.users.push(authorDetails)
+                    delete item['authorDetails']
+                })
 
-    return (
-        <div className={classes.root}>
-            <Container>
-                <Grid container spacing={10}>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
+                this.setState({
+                    articles: data,
+                })
+            })
+    }
+
+    render() {
+        const { classes } = this.props;
+        return (
+            <div className={classes.root}>
+                <Container>
+                    <Grid container spacing={10} justify="center" alignItems="center">
+                        {
+                            this.state.articles.map((data, index) =>
+                                <Grid item key={data.id} md={4} sm={6} xs={12}>
+                                    <BlogCard data={data} author={this.state.users[index]}/>
+                                </Grid>
+                            )
+                        }
                     </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                    <Grid item md={4} sm={6} xs={12}>
-                        <BlogCard/>
-                    </Grid>
-                </Grid>
-            </Container>
-        </div>
-    );
+                </Container>
+            </div>
+        );
+    }
 }
 
-export default BlogsPage
+export default withStyles(useStyles)(BlogsPage);

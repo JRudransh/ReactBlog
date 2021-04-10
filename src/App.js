@@ -1,8 +1,9 @@
 import HomePage from "./Pages/Home";
 import BlogsPage from "./Pages/Blogs";
+import BlogPage from "./Pages/Blog";
 import AboutPage from "./Pages/About";
 import ContactPage from "./Pages/Contact";
-import {Route, Switch, BrowserRouter as Router} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import NavBar from "./Pages/Groups/NavBar";
 
 
@@ -27,6 +28,10 @@ function App() {
 
                     <Route exact path='/contact'>
                         <ContactPage/>
+                    </Route>
+
+                    <Route path='/blog/:id'>
+                        <BlogPage/>
                     </Route>
                 </Switch>
             </div>

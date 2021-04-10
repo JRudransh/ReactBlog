@@ -8,7 +8,7 @@ export default function MenuButtons(props) {
     return (
         <div className={classes}>
             {MenuItems.map((item, index) => (
-                <Button color="inherit" style={{margin: ' auto 20px'}} onClick={() => {props.OnClick(item.url)}}>{item.name}</Button>
+                <Button key={index} color="inherit" style={{margin: ' auto 20px'}} onClick={() => {props.OnClick(item.url)}}>{item.name}</Button>
             ))}
         </div>
     );
